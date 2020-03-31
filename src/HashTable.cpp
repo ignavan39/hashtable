@@ -5,10 +5,56 @@
 #include <sstream>
 #include "HashTable.h"
 template<typename Key, typename Value>
-HashTable<Key, Value>::HashTable():capacity{11},store() {}
+HashTable<Key, Value>::Table_iterator::Table_iterator(HashTable<Key, Value> other) {
+    this->current = other.store.begin();
+}
 
 template<typename Key, typename Value>
-HashTable<Key, Value>::HashTable(size_t _capacity):capacity{_capacity},store() {}
+typename HashTable<Key,Value>::Table_iterator &HashTable<Key, Value>::
+        Table_iterator::operator=(const HashTable::Table_iterator &rhs) {
+    this->current = rhs.current;
+    return *this;
+
+}
+
+template<typename Key, typename Value>
+typename HashTable<Key,Value>::Table_iterator &HashTable<Key, Value>::Table_iterator::operator++() {
+    current++;
+    return *this;
+}
+
+template<typename Key, typename Value>
+typename HashTable<Key,Value>::Table_iterator & HashTable<Key, Value>::Table_iterator::operator++(int i) {
+    current++(i);
+    return *this;
+}
+
+template<typename Key, typename Value>
+Value HashTable<Key, Value>::Table_iterator::operator*() {
+    return current->second.front().second;
+}
+
+template<typename Key, typename Value>
+bool HashTable<Key, Value>::Table_iterator::operator==(const HashTable::Table_iterator &rhs) const {
+    return current == rhs.current;
+}
+
+template<typename Key, typename Value>
+bool HashTable<Key, Value>::Table_iterator::operator!=(const HashTable::Table_iterator &rhs) const {
+    return !(rhs == *this);
+}
+
+template<typename Key, typename Value>
+void HashTable<Key, Value>::Table_iterator::setCurrent
+(typename deque<pair<int,list<pair<Key,Value>>>>::iterator& other) {
+    this->current = other;
+}
+
+
+template<typename Key, typename Value>
+HashTable<Key, Value>::HashTable():idx_in_prime_array{0},store() {}
+
+
 
 template<typename Key, typename Value>
 int HashTable<Key, Value>::hash(const string& hasher) {
@@ -16,7 +62,7 @@ int HashTable<Key, Value>::hash(const string& hasher) {
     for(char i : hasher){
         idx += static_cast<int> (i)*(i+1);
     }
-    return idx % capacity;
+    return idx % array_prime_size_[0];
 }
 
 template<typename Key, typename Value>
@@ -27,8 +73,8 @@ string HashTable<Key, Value>::convert_to_string(K key)  {
 }
 
 template<typename Key, typename Value>
-size_t HashTable<Key, Value>::load_factor() const {
-    return capacity;
+size_t HashTable<Key, Value>::capacity() const {
+    return array_prime_size_[idx_in_prime_array];
 }
 
 template<typename Key, typename Value>
@@ -43,6 +89,19 @@ void HashTable<Key, Value>::insert(pair<K, V> pair1) {
      insert(pair1.first,pair1.second);
 }
 
+/**
+ *
+ * @tparam Key
+ * @tparam Value
+ * @param key , value
+ *
+ *
+ * if we found a list by this key, then either there is a collision here or
+ * we are trying to replace the same element,
+ * we need to refer to the internal list that stores the pair (key, value),
+ * if the key from the pair matches the input, then this is a case of replacement, if not - conflict
+ */
+
 template<typename Key, typename Value>
 void HashTable<Key, Value>::insert(K key, V value){
     int index_ = hash(convert_to_string(key));
@@ -56,7 +115,7 @@ void HashTable<Key, Value>::insert(K key, V value){
                 if(buff_LItr->first == key){
                     if(buff_LItr->second == value)break;
                     else{
-                        item->second.erase(buff_LItr);
+                        //item->second.erase(buff_LItr);
                         item->second.emplace(buff_LItr,pair<K,V> (key,value));
                     }
                     flag2 = true;
@@ -74,15 +133,26 @@ void HashTable<Key, Value>::insert(K key, V value){
         buffList.push_back(pair1);
         store.push_back(pair<int,list<pair<K,V>>> (index_,buffList));
     }
-
+    if(this->size() == array_prime_size_[idx_in_prime_array]-1){
+        idx_in_prime_array++;
+    }
 }
 
+/**
+ *
+ * @tparam Key
+ * @tparam Value
+ * @param key
+ * @return value for this key
+ */
 template<typename Key, typename Value>
 Value HashTable<Key, Value>::at(K key) {
     int index_ = hash(convert_to_string(key));
     for(auto item = store.begin();item!=store.end();item++){
         if(item->first == index_){
+
             //if a conflict has collision
+
             for(auto item2 = item->second.begin();item2!=item->second.end();item2++){
                 if(item2->first == key)return item2->second;
             }
@@ -90,6 +160,48 @@ Value HashTable<Key, Value>::at(K key) {
     }
 }
 
+template<typename Key, typename Value>
+bool HashTable<Key, Value>::empty() const {
+    return store.size()>0;
+}
+
+template<typename Key, typename Value>
+void HashTable<Key, Value>::makeEmpty() {
+    while(store.size() > 0 ){
+        store.pop_back();
+    }
+    idx_in_prime_array = 0;
+}
+
+template<typename Key, typename Value>
+HashTable<Key, Value>::~HashTable() {
+    makeEmpty();
+}
+
+
+
+template<typename Key, typename Value>
+bool HashTable<Key, Value>::contain(K &key) const {
+    int index_ = hash(convert_to_string(key));
+    for (auto item = store.begin(); item != store.end(); item++) {
+        if (item->first == index_) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template<typename Key, typename Value>
+typename HashTable<Key,Value>::Table_iterator HashTable<Key, Value>::begin() {
+    return Table_iterator(*this);
+}
+
+template<typename Key, typename Value>
+typename HashTable<Key,Value>::Table_iterator HashTable<Key, Value>::end() {
+    Table_iterator it(*this);
+    it.setCurrent(this->store.end());
+    return it;
+}
 
 
 
