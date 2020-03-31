@@ -22,7 +22,7 @@ public:
 
     void insert(K key, V value);
     bool contain(K &key) const;
-    V at(K &key);
+    V at(K key);
     void makeEmpty();
     bool empty() const;
     size_t size() const;
@@ -38,7 +38,6 @@ public:
 
 private:
     size_t capacity;
-    size_t _size;
     deque<pair<int,list<pair<K,V>>>> store;
     int hash(const string &hasher);
    // list<pair<K,V>> matching_index(int find_key);

@@ -5,10 +5,10 @@
 #include <sstream>
 #include "HashTable.h"
 template<typename Key, typename Value>
-HashTable<Key, Value>::HashTable():_size{0},capacity{11},store() {}
+HashTable<Key, Value>::HashTable():capacity{11},store() {}
 
 template<typename Key, typename Value>
-HashTable<Key, Value>::HashTable(size_t _capacity):_size{0},capacity{_capacity},store() {}
+HashTable<Key, Value>::HashTable(size_t _capacity):capacity{_capacity},store() {}
 
 template<typename Key, typename Value>
 int HashTable<Key, Value>::hash(const string& hasher) {
@@ -33,7 +33,7 @@ size_t HashTable<Key, Value>::load_factor() const {
 
 template<typename Key, typename Value>
 size_t HashTable<Key, Value>::size() const {
-    return _size;
+    return store.size();
 }
 
 
@@ -73,6 +73,20 @@ void HashTable<Key, Value>::insert(K key, V value){
         list<pair<K,V>> buffList;
         buffList.push_back(pair1);
         store.push_back(pair<int,list<pair<K,V>>> (index_,buffList));
+    }
+
+}
+
+template<typename Key, typename Value>
+Value HashTable<Key, Value>::at(K key) {
+    int index_ = hash(convert_to_string(key));
+    for(auto item = store.begin();item!=store.end();item++){
+        if(item->first == index_){
+            //if a conflict has collision
+            for(auto item2 = item->second.begin();item2!=item->second.end();item2++){
+                if(item2->first == key)return item2->second;
+            }
+        }
     }
 }
 
