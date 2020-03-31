@@ -46,10 +46,33 @@ void HashTable<Key, Value>::insert(pair<K, V> pair1) {
 template<typename Key, typename Value>
 void HashTable<Key, Value>::insert(K key, V value){
     int index_ = hash(convert_to_string(key));
+    bool flag1 = false;
     for(auto item = store.begin();item!=store.end();item++){
         if(item->first == index_){
-            auto& buff_list = item->second;
+            flag1 = true;
+            //auto& buff_list = item->second;
+            bool flag2 = false;
+            for(auto buff_LItr = item->second.begin();buff_LItr!=item->second.end();buff_LItr++){
+                if(buff_LItr->first == key){
+                    if(buff_LItr->second == value)break;
+                    else{
+                        item->second.erase(buff_LItr);
+                        item->second.emplace(buff_LItr,pair<K,V> (key,value));
+                    }
+                    flag2 = true;
+                }
+            }
+            if(!flag2){
+                item->second.push_back(pair<K,V> (key,value));
+            }
         }
+
+    }
+    if(!flag1){
+        pair<K,V> pair1(key,value);
+        list<pair<K,V>> buffList;
+        buffList.push_back(pair1);
+        store.push_back(pair<int,list<pair<K,V>>> (index_,buffList));
     }
 }
 
