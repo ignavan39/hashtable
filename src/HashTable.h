@@ -36,7 +36,7 @@ public:
 private:
     size_t capacity;
     size_t _size;
-    list<pair<int,list<V>>> store;
+    list<pair<int,list<pair<K,V>>>> store;
     int hash(const string& hasher);
     string convert_to_string(K key) const;
 };
