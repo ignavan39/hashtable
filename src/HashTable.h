@@ -5,6 +5,7 @@
 #ifndef TASK4_HASHTABLE_H
 #define TASK4_HASHTABLE_H
 
+#include <deque>
 #include <cstdio>
 #include <list>
 #include <string>
@@ -17,7 +18,9 @@ public:
     using K = Key;
     using V = Value;
 
-    bool insert(K &key, V &value) const;
+    void insert(pair<K,V> pair1);
+
+    void insert(K key, V value);
     bool contain(K &key) const;
     V at(K &key);
     void makeEmpty();
@@ -36,9 +39,10 @@ public:
 private:
     size_t capacity;
     size_t _size;
-    list<pair<int,list<pair<K,V>>>> store;
-    int hash(const string& hasher);
-    string convert_to_string(K key) const;
+    deque<pair<int,list<pair<K,V>>>> store;
+    int hash(const string &hasher);
+   // list<pair<K,V>> matching_index(int find_key);
+    string convert_to_string(K key);
 };
 
 
