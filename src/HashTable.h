@@ -23,21 +23,25 @@ public:
     void makeEmpty();
     bool empty() const;
     size_t size() const;
+    size_t load_factor() const;
     /*class TableIterator{
         TableIterator(HashTable<K,V>);
 
     };*/
     HashTable();
-    HashTable(size_t capacity);
+    explicit HashTable(size_t capacity);
     HashTable(HashTable<K,V>&);
-    HashTable(HashTable<K,V>&&);
+    HashTable(HashTable<K,V>&&) noexcept ;
 
 private:
-    size_t count;
+    size_t capacity;
     size_t _size;
-    list<pair<string,list<V>>> store;
-    string hash(K key);
+    list<pair<int,list<V>>> store;
+    int hash(const string& hasher);
+    string convert_to_string(K key) const;
 };
+
+
 
 
 #endif //TASK4_HASHTABLE_H
