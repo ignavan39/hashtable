@@ -24,3 +24,12 @@ TEST(Iterator,Norm_Iterator){
     EXPECT_EQ(3,*it);
 
 }
+TEST(Copy,NormCopy){
+    HashTable<int,int> k;
+    k.insert(1,2);
+    k.insert(2,3);
+    k.insert(3,4);
+    HashTable<int,int> k2(k);
+    EXPECT_EQ(2,k2.at(1));
+    EXPECT_EQ(3,k2.at(2));
+}

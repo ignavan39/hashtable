@@ -24,7 +24,7 @@ typename HashTable<Key,Value>::Table_iterator &HashTable<Key, Value>::Table_iter
 }
 
 template<typename Key, typename Value>
-typename HashTable<Key,Value>::Table_iterator & HashTable<Key, Value>::Table_iterator::operator++(int i) {
+const typename HashTable<Key, Value>::Table_iterator  HashTable<Key, Value>::Table_iterator::operator++(int i) {
     current++(i);
     return *this;
 }
@@ -45,8 +45,19 @@ bool HashTable<Key, Value>::Table_iterator::operator!=(const HashTable::Table_it
 }
 
 template<typename Key, typename Value>
-void HashTable<Key, Value>::Table_iterator::setCurrent
-(typename deque<pair<int,list<pair<Key,Value>>>>::iterator& other) {
+typename HashTable<Key, Value>::Table_iterator &HashTable<Key, Value>::Table_iterator::operator--() {
+    return current--;
+}
+
+template<typename Key, typename Value>
+const typename HashTable<Key, Value> ::Table_iterator HashTable<Key, Value>::Table_iterator::operator--(int i){
+    current--(i);
+    return *this;
+}
+
+
+template<typename Key, typename Value>
+void HashTable<Key, Value>::Table_iterator::setCurrent(typename deque<pair<int,list<pair<Key,Value>>>>::iterator& other) {
     this->current = other;
 }
 
@@ -202,6 +213,27 @@ typename HashTable<Key,Value>::Table_iterator HashTable<Key, Value>::end() {
     it.setCurrent(this->store.end());
     return it;
 }
+
+template<typename Key, typename Value>
+HashTable<Key, Value>::HashTable(const HashTable<K,V> & other) {
+    this->store =other.store;
+    this->idx_in_prime_array = other.idx_in_prime_array;
+}
+
+template<typename Key, typename Value>
+HashTable<Key, Value>::HashTable(HashTable<K, V> && other) noexcept {
+    this->store = other.store;
+    this->idx_in_prime_array = other.idx_in_prime_array;
+}
+
+template<typename Key, typename Value>
+HashTable<Key, Value> &HashTable<Key, Value>::operator=(const HashTable<K,V> &other) {
+    this->store = other.store;
+    this->idx_in_prime_array = other.idx_in_prime_array;
+    return *this;
+}
+
+
 
 
 
