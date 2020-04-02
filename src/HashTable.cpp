@@ -7,19 +7,23 @@
 template<typename Key, typename Value>
 HashTable<Key, Value>::Table_iterator::Table_iterator(HashTable<Key, Value> other) {
     this->current = other.store.begin();
+    this->dive = false;
+    this->divingDepth = 0;
 }
 
 template<typename Key, typename Value>
 typename HashTable<Key,Value>::Table_iterator &HashTable<Key, Value>::
         Table_iterator::operator=(const HashTable::Table_iterator &rhs) {
     this->current = rhs.current;
+    this->dive = rhs.dive;
+    this->divingDepth = rhs.divingDepth;
     return *this;
 
 }
 
 template<typename Key, typename Value>
 typename HashTable<Key,Value>::Table_iterator &HashTable<Key, Value>::Table_iterator::operator++() {
-    current++;
+    if(!dive)current++;
     return *this;
 }
 
@@ -31,12 +35,27 @@ const typename HashTable<Key, Value>::Table_iterator  HashTable<Key, Value>::Tab
 
 template<typename Key, typename Value>
 Value HashTable<Key, Value>::Table_iterator::operator*() {
-    return current->second.front().second;
+    if(current->second.size()>1 && divingDepth < current->second.size()){
+        dive = true;
+        int i =0;
+        auto it = current->second.begin();
+        while (i<divingDepth){
+            it++;
+        }
+        divingDepth++;
+        return it->second;
+    }
+    else{
+        dive = false;
+        divingDepth = 0;
+        return current->second.front().second;
+    }
+
 }
 
 template<typename Key, typename Value>
 bool HashTable<Key, Value>::Table_iterator::operator==(const HashTable::Table_iterator &rhs) const {
-    return current == rhs.current;
+    return current == rhs.current && dive == rhs.dive && divingDepth == rhs.divingDepth;
 }
 
 template<typename Key, typename Value>

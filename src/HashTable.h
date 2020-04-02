@@ -35,6 +35,8 @@ public:
 
     private:
          typename deque<pair<int,list<pair<Key,Value>>>>::iterator current;
+         bool dive;
+         int divingDepth;
         friend class HashTable<Key,Value>;
     };
 
