@@ -87,19 +87,19 @@ HashTable<Key, Value>::HashTable():idx_in_prime_array{0},store() {}
 
 
 template<typename Key, typename Value>
-int HashTable<Key, Value>::hash(const string& hasher) {
+int HashTable<Key, Value>::hash(const string& hasher) const {
     int idx = 0;
     for(char i : hasher){
         idx += static_cast<int> (i)*(i+1);
     }
-    return idx % array_prime_size_[0];
+    return idx % array_prime_size_[idx_in_prime_array];
 }
 
 template<typename Key, typename Value>
-string HashTable<Key, Value>::convert_to_string(K key)  {
+string HashTable<Key, Value>::convert_to_string(K key) const {
    ostringstream os;
    os<<key;
-   return os.str();
+   return static_cast<string>(os.str());
 }
 
 template<typename Key, typename Value>
@@ -188,6 +188,7 @@ Value HashTable<Key, Value>::at(K key) {
             }
         }
     }
+    throw exception();
 }
 
 template<typename Key, typename Value>
@@ -211,7 +212,7 @@ HashTable<Key, Value>::~HashTable() {
 
 
 template<typename Key, typename Value>
-bool HashTable<Key, Value>::contain(K &key) const {
+bool HashTable<Key, Value>::contain(K key) const {
     int index_ = hash(convert_to_string(key));
     for (auto item = store.begin(); item != store.end(); item++) {
         if (item->first == index_) {

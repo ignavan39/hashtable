@@ -46,7 +46,7 @@ public:
     void insert(pair<K,V> pair1);
 
     void insert(K key, V value);
-    bool contain(K &key) const;
+    bool contain(K key) const;
     V at(K key);
     void makeEmpty();
     [[nodiscard]] bool empty() const;
@@ -65,8 +65,8 @@ public:
 private:
     size_t idx_in_prime_array{};
     deque<pair<int,list<pair<K,V>>>> store;
-    int hash(const string &hasher);
-    string convert_to_string(K key);
+    [[nodiscard]] int hash(const string &hasher) const ;
+    string convert_to_string(K key) const;
 
     constexpr static  const std::size_t array_prime_size_[23]  { 11, 13, 17, 19, 31, 37, 43, 51, 57, 129, 401,643,
                                                853, 1009, 1069,3271, 3299, 4139, 4463, 4621,

@@ -33,3 +33,20 @@ TEST(Copy,NormCopy){
     EXPECT_EQ(2,k2.at(1));
     EXPECT_EQ(3,k2.at(2));
 }
+TEST(Contain,NO_CONTAIN){
+    HashTable<int,int> k;
+    k.insert(1,2);
+    k.insert(2,3);
+    k.insert(3,4);
+    EXPECT_FALSE(k.contain(5));
+    EXPECT_TRUE(k.contain(2));
+}
+TEST(AT,THROW_EXCEPTION){
+    HashTable<int,int> k;
+    k.insert(1,2);
+    k.insert(2,3);
+    k.insert(3,4);
+    EXPECT_EQ(3,k.at(2));
+    EXPECT_THROW(k.at(55),exception);
+
+}
